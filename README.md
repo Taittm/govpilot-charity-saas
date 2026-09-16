@@ -1,4 +1,4 @@
-# Compliance Console — Phase 0 through Phase 7
+# Compliance Console — Phase 0 through Phase 8
 
 Coded prototype of the UK charity/CIC compliance SaaS described in [CLAUDE.md](./CLAUDE.md).
 
@@ -58,6 +58,13 @@ Coded prototype of the UK charity/CIC compliance SaaS described in [CLAUDE.md](.
   registration, Cyber Essentials certification, and signing DPAs with real clients all
   require real-world business action this session can't take on the operator's behalf —
   the docs get everything ready for that action.
+- **Phase 8**: go-to-market — pricing only. A market scan of nine comparable UK products
+  (plus what consultants currently charge for a manual health check) and a recommended
+  starting price: **£19/month self-serve** (individual charity/CIC), **£15/client/month**
+  for the consultant/agency tier, tapering with volume. Full comparison table and
+  reasoning in [docs/go-to-market-pricing.md](docs/go-to-market-pricing.md). The rest of
+  Phase 8 (reference clients, sector body relationships) is real-world business
+  development, not something this session can do.
 
 ## Stack
 

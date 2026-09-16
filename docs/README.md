@@ -1,9 +1,10 @@
-# Platform Compliance & Security Hardening (Phase 7)
+# Platform Compliance & Go-to-Market Docs (Phases 7–8)
 
-This folder holds the process/infrastructure documents Phase 7 calls for. Unlike Phases
-0–6, this phase is explicitly *not* new app features — see `CLAUDE.md`'s phase list — so
-there's no corresponding code change, just these documents plus one thing that could
-actually be executed and verified: a tested backup restore.
+This folder holds the process/business documents Phases 7 and 8 call for, as opposed to
+app features. Phase 7 (platform compliance & security hardening) and Phase 8
+(go-to-market) are both explicitly *not* new app features — see `CLAUDE.md`'s phase list —
+so there's no corresponding code change for most of this, just these documents plus one
+thing that could actually be executed and verified: a tested backup restore.
 
 | Document | What it covers | Status |
 |---|---|---|
@@ -12,6 +13,7 @@ actually be executed and verified: a tested backup restore.
 | [`cyber-essentials-checklist.md`](./cyber-essentials-checklist.md) | Readiness against the 5 Cyber Essentials control themes | Not started; groundwork assessed and gaps identified |
 | [`backup-disaster-recovery-plan.md`](./backup-disaster-recovery-plan.md) | Backup approach, recovery procedure, and a real restore test | **Restore tested successfully** on 16 September 2026 |
 | [`ico-registration-checklist.md`](./ico-registration-checklist.md) | Registering the platform itself with the ICO | Not started — real-world action for whoever operates the platform |
+| [`go-to-market-pricing.md`](./go-to-market-pricing.md) | Phase 8: market scan of comparable UK charity compliance/governance software, and a recommended starting price | Recommendation made: £19/mo self-serve, £15/client/mo consultant tier |
 
 ## Against Phase 7's "done when" criteria
 
