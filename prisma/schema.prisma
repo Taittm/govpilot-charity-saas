@@ -1,0 +1,420 @@
+// Prisma schema — Phase 0 (Foundations) + Phase 1 (Health Check) + Phase 2 (Calendar & Documents)
+// + Phase 3 (Governance) + Phase 4 (Financial) + Phase 5 (Data Protection) + Phase 6 (Grants)
+// Local dev uses SQLite for zero-setup; swap datasource to postgresql for production.
+// Postgres-compatible: no SQLite-only types are used.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum OrganisationType {
+  CHARITY
+  CIC
+  BOTH
+}
+
+enum IncomeBand {
+  UNDER_10K
+  BETWEEN_10K_25K
+  OVER_25K
+  OVER_250K
+  OVER_1M
+}
+
+enum RoleName {
+  CONSULTANT_ADMIN
+  TRUSTEE_DIRECTOR
+  STAFF
+  VOLUNTEER
+  READ_ONLY
+}
+
+enum AccountType {
+  CONSULTANT
+  INDIVIDUAL
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  name         String?
+  accountType  AccountType
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  memberships Membership[]
+  healthChecks HealthCheck[]
+  documents    Document[]
+}
+
+// An Organisation is a client (consultant tenant shape) or the charity/CIC itself
+// (individual tenant shape) — Membership is what distinguishes the two, not a
+// separate "account" entity: a consultant is just a User with memberships to
+// many Organisations, an individual charity a User with membership to one.
+model Organisation {
+  id               String           @id @default(cuid())
+  name             String
+  type             OrganisationType
+  incomeBand       IncomeBand
+  financialYearEnd DateTime
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  memberships           Membership[]
+  healthChecks          HealthCheck[]
+  documents             Document[]
+  trustees              Trustee[]
+  meetings              Meeting[]
+  conflictsOfInterest   ConflictOfInterest[]
+  policies              Policy[]
+  financialYearRecords  FinancialYearRecord[]
+  donations             Donation[]
+  icoRegistration       IcoRegistration?
+  dataBreaches          DataBreach[]
+  subjectAccessRequests SubjectAccessRequest[]
+  grants                Grant[]
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  role      RoleName
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, organisationId])
+}
+
+enum RagScore {
+  RED
+  AMBER
+  GREEN
+}
+
+enum AnswerValue {
+  YES
+  PARTIAL
+  NO
+}
+
+// A HealthCheck is one point-in-time run of the questionnaire against an
+// Organisation. `version` increments per organisation so re-running the
+// check later can be compared against the previous result — section/overall
+// scores are snapshotted onto the HealthCheck itself (not recomputed from
+// current question weights) so old reports stay accurate if the
+// questionnaire changes later.
+model HealthCheck {
+  id            String   @id @default(cuid())
+  version       Int
+  overallScore  RagScore
+  createdAt     DateTime @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  createdByUserId String
+  createdBy       User   @relation(fields: [createdByUserId], references: [id])
+
+  answers       HealthCheckAnswer[]
+  sectionScores HealthCheckSectionScore[]
+
+  @@unique([organisationId, version])
+}
+
+model HealthCheckAnswer {
+  id         String      @id @default(cuid())
+  questionId String
+  sectionKey String
+  value      AnswerValue
+
+  healthCheckId String
+  healthCheck   HealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
+
+  @@unique([healthCheckId, questionId])
+}
+
+model HealthCheckSectionScore {
+  id         String   @id @default(cuid())
+  sectionKey String
+  score      RagScore
+
+  healthCheckId String
+  healthCheck   HealthCheck @relation(fields: [healthCheckId], references: [id], onDelete: Cascade)
+
+  @@unique([healthCheckId, sectionKey])
+}
+
+enum DocumentTag {
+  GOVERNING_DOCUMENT
+  PAST_FILING
+  POLICY
+  MINUTES
+  OTHER
+}
+
+// Documents are versioned via `groupId`: every version of "the same" document
+// shares a groupId (the first version's own id) and increments `version`.
+// Content is stored directly as a Postgres/SQLite-compatible Bytes column —
+// fine at prototype scale; swap for object storage (S3-compatible) before
+// handling real client files at volume.
+model Document {
+  id         String      @id @default(cuid())
+  groupId    String
+  version    Int         @default(1)
+  filename   String
+  mimeType   String
+  sizeBytes  Int
+  tag        DocumentTag
+  content    Bytes
+  createdAt  DateTime    @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  uploadedByUserId String
+  uploadedBy       User   @relation(fields: [uploadedByUserId], references: [id])
+
+  @@unique([groupId, version])
+  @@index([organisationId])
+}
+
+enum DbsCheckType {
+  NONE
+  BASIC
+  STANDARD
+  ENHANCED
+}
+
+enum MeetingType {
+  BOARD_MEETING
+  AGM
+}
+
+// The product never performs DBS checks itself — dbsCheckType/dbsCheckedOn/
+// dbsExpiresOn only record what an external umbrella body has already done.
+// dbsExpiresOn feeds the compliance calendar (see src/lib/deadlines.ts).
+model Trustee {
+  id           String       @id @default(cuid())
+  name         String
+  role         String
+  appointedOn  DateTime
+  termEndsOn   DateTime?
+  dbsCheckType DbsCheckType @default(NONE)
+  dbsCheckedOn DateTime?
+  dbsExpiresOn DateTime?
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+// Minutes are stored as a Document (tag MINUTES) so they get the vault's
+// existing versioning — minutesGroupId points at that Document's groupId,
+// re-uploaded minutes become a new version of the same group.
+model Meeting {
+  id             String      @id @default(cuid())
+  type           MeetingType
+  title          String
+  scheduledFor   DateTime
+  minutesGroupId String?
+  createdAt      DateTime    @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+model ConflictOfInterest {
+  id         String   @id @default(cuid())
+  personName String
+  interest   String
+  declaredOn DateTime
+  createdAt  DateTime @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+// reviewDueOn feeds the compliance calendar as an overdue flag once it's in
+// the past (see src/lib/deadlines.ts).
+model Policy {
+  id              String   @id @default(cuid())
+  name            String
+  reviewDueOn     DateTime
+  documentGroupId String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+// income/assets are pounds as a Float for prototype simplicity — real money
+// handling should use integer minor units (pence) to avoid rounding drift;
+// fine at the precision these compliance thresholds need, not fine for
+// anything that reconciles against actual ledger entries.
+model FinancialYearRecord {
+  id        String   @id @default(cuid())
+  yearEndOn DateTime
+  income    Float
+  assets    Float?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@unique([organisationId, yearEndOn])
+  @@index([organisationId])
+}
+
+enum DonationScheme {
+  GIFT_AID
+  GASDS
+}
+
+enum DonationMethod {
+  CASH
+  CONTACTLESS
+  OTHER
+}
+
+// GASDS eligibility (cash/contactless, <=£30/donation) is enforced at entry
+// (see src/app/api/.../donations/route.ts) so every stored GASDS row is
+// already individually eligible — the £8,000/year cap and 10x-matched-Gift-
+// Aid cap are evaluated across the set at read time (src/lib/gift-aid.ts)
+// since they depend on the whole tax year's donations, not a single row.
+model Donation {
+  id        String         @id @default(cuid())
+  donorName String?
+  amount    Float
+  scheme    DonationScheme
+  method    DonationMethod
+  donatedOn DateTime
+  createdAt DateTime       @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+enum IcoTier {
+  TIER_1
+  TIER_2
+  TIER_3
+}
+
+// One registration per Organisation. renewalOn overrides the default
+// createdAt-anniversary anchor used by the compliance calendar when set
+// (see src/lib/deadlines.ts, src/lib/governance.ts).
+model IcoRegistration {
+  id        String    @id @default(cuid())
+  tier      IcoTier   @default(TIER_1)
+  renewalOn DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  organisationId String       @unique
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+}
+
+model DataBreach {
+  id            String   @id @default(cuid())
+  occurredOn    DateTime
+  description   String
+  actionTaken   String
+  reportedToIco Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+enum SarStatus {
+  OPEN
+  COMPLETED
+}
+
+// dueOn is computed and stored at creation time (statutory one calendar
+// month from receivedOn, see src/lib/sar.ts) rather than recomputed on
+// read, since it must stay fixed even if receivedOn were ever corrected.
+model SubjectAccessRequest {
+  id            String    @id @default(cuid())
+  requesterName String?
+  receivedOn    DateTime
+  dueOn         DateTime
+  status        SarStatus @default(OPEN)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  @@index([organisationId])
+}
+
+enum GrantStatus {
+  RESEARCHING
+  APPLIED
+  AWARDED
+  DECLINED
+  COMPLETED
+}
+
+// applicationDeadline feeds the calendar while status is RESEARCHING/APPLIED
+// (see src/lib/deadlines.ts) — once a decision is made it stops being a
+// live deadline. Reporting obligations are tracked separately below since a
+// single grant can carry several (interim + final reports, etc.).
+model Grant {
+  id                 String      @id @default(cuid())
+  name               String
+  funder             String
+  amount             Float?
+  applicationDeadline DateTime
+  status             GrantStatus @default(RESEARCHING)
+  notes              String?
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  reportingObligations GrantReportingObligation[]
+
+  @@index([organisationId])
+}
+
+// Incomplete obligations feed the calendar (see src/lib/deadlines.ts).
+model GrantReportingObligation {
+  id          String   @id @default(cuid())
+  description String
+  dueOn       DateTime
+  completed   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  grantId String
+  grant   Grant  @relation(fields: [grantId], references: [id], onDelete: Cascade)
+
+  @@index([grantId])
+}
