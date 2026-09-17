@@ -1,15 +1,16 @@
 // Prisma schema — Phase 0 (Foundations) + Phase 1 (Health Check) + Phase 2 (Calendar & Documents)
 // + Phase 3 (Governance) + Phase 4 (Financial) + Phase 5 (Data Protection) + Phase 6 (Grants)
-// Local dev uses SQLite for zero-setup; swap datasource to postgresql for production.
-// Postgres-compatible: no SQLite-only types are used.
+// Postgres (Neon), shared by local dev and the deployed app. directUrl bypasses Neon's
+// connection pooler for schema pushes/migrations, which don't work reliably through it.
 
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
 enum OrganisationType {

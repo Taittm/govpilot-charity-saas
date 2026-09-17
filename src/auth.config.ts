@@ -4,6 +4,7 @@ import type { NextAuthConfig } from "next-auth";
 // The Credentials provider itself lives in auth.ts, which is only ever
 // evaluated in the Node.js runtime (API route handlers, server components).
 export const authConfig = {
+  trustHost: true, // required behind Vercel's proxy — Auth.js can't infer the host otherwise
   session: { strategy: "jwt" },
   pages: { signIn: "/login" },
   providers: [],
