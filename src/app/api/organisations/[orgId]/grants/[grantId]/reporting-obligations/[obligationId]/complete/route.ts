@@ -1,18 +1,14 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getMembership } from "@/lib/orgs";
+import { requireWriteMembership, isAuthFailure } from "@/lib/api-auth";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ orgId: string; grantId: string; obligationId: string }> }
 ) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { orgId, grantId, obligationId } = await params;
-  const membership = await getMembership(session.user.id, orgId);
-  if (!membership) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const authResult = await requireWriteMembership(orgId);
+  if (isAuthFailure(authResult)) return authResult.error;
 
   const obligation = await prisma.grantReportingObligation.findFirst({
     where: { id: obligationId, grantId, grant: { organisationId: orgId } },

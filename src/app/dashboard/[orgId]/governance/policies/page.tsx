@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listPolicies } from "@/lib/governance";
+import { canWrite } from "@/lib/permissions";
 import { GovernanceSubNav } from "@/components/GovernanceSubNav";
 import { PolicyForm } from "@/components/PolicyForm";
 
@@ -26,7 +27,7 @@ export default async function PoliciesPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <GovernanceSubNav orgId={orgId} active="/policies" />
 
-      <PolicyForm orgId={orgId} />
+      {canWrite(membership.role) && <PolicyForm orgId={orgId} />}
 
       <p className="mb-2 text-xs text-gray-500">
         Policy documents themselves live in the{" "}

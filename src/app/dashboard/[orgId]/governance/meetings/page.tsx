@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listMeetings } from "@/lib/governance";
 import { getLatestDocumentInGroup } from "@/lib/documents";
+import { canWrite } from "@/lib/permissions";
 import { GovernanceSubNav } from "@/components/GovernanceSubNav";
 import { MeetingForm } from "@/components/MeetingForm";
 import { MinutesUpload } from "@/components/MinutesUpload";
@@ -35,7 +36,7 @@ export default async function MeetingsPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <GovernanceSubNav orgId={orgId} active="/meetings" />
 
-      <MeetingForm orgId={orgId} />
+      {canWrite(membership.role) && <MeetingForm orgId={orgId} />}
 
       {meetings.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
@@ -62,7 +63,7 @@ export default async function MeetingsPage({
                   </a>
                 )}
               </div>
-              <MinutesUpload orgId={orgId} meetingId={m.id} />
+              {canWrite(membership.role) && <MinutesUpload orgId={orgId} meetingId={m.id} />}
             </li>
           ))}
         </ul>

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listConflictsOfInterest } from "@/lib/governance";
+import { canWrite } from "@/lib/permissions";
 import { GovernanceSubNav } from "@/components/GovernanceSubNav";
 import { ConflictForm } from "@/components/ConflictForm";
 
@@ -25,7 +26,7 @@ export default async function ConflictsPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <GovernanceSubNav orgId={orgId} active="/conflicts" />
 
-      <ConflictForm orgId={orgId} />
+      {canWrite(membership.role) && <ConflictForm orgId={orgId} />}
 
       {conflicts.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">

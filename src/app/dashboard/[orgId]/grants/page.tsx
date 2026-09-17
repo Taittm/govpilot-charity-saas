@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listGrants } from "@/lib/grants";
+import { canWrite } from "@/lib/permissions";
 import { GrantForm } from "@/components/GrantForm";
 import { ReportingObligationForm } from "@/components/ReportingObligationForm";
 import { ObligationCompleteButton } from "@/components/ObligationCompleteButton";
@@ -48,7 +49,7 @@ export default async function GrantsPage({
         Funding opportunities and reporting obligations for {membership.organisation.name}.
       </p>
 
-      <GrantForm orgId={orgId} />
+      {canWrite(membership.role) && <GrantForm orgId={orgId} />}
 
       {grants.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
@@ -84,7 +85,7 @@ export default async function GrantsPage({
                             {o.description} — due {fmt(o.dueOn)}
                             {o.completed ? " (done)" : overdue ? " (overdue)" : ""}
                           </span>
-                          {!o.completed && (
+                          {!o.completed && canWrite(membership.role) && (
                             <ObligationCompleteButton orgId={orgId} grantId={g.id} obligationId={o.id} />
                           )}
                         </li>
@@ -92,7 +93,7 @@ export default async function GrantsPage({
                     })}
                   </ul>
                 )}
-                <ReportingObligationForm orgId={orgId} grantId={g.id} />
+                {canWrite(membership.role) && <ReportingObligationForm orgId={orgId} grantId={g.id} />}
               </div>
             </li>
           ))}

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listTrustees } from "@/lib/governance";
+import { canWrite } from "@/lib/permissions";
 import { GovernanceSubNav } from "@/components/GovernanceSubNav";
 import { TrusteeForm } from "@/components/TrusteeForm";
 
@@ -38,7 +39,7 @@ export default async function TrusteesPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <GovernanceSubNav orgId={orgId} active="/trustees" />
 
-      <TrusteeForm orgId={orgId} />
+      {canWrite(membership.role) && <TrusteeForm orgId={orgId} />}
 
       {trustees.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">

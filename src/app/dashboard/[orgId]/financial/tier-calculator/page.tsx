@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listFinancialYearRecords } from "@/lib/financial";
 import { calculateAccountsTier, ACCOUNTS_BASIS_LABEL, EXAMINATION_LABEL } from "@/lib/accounts-tier";
+import { canWrite } from "@/lib/permissions";
 import { FinancialSubNav } from "@/components/FinancialSubNav";
 import { FinancialYearForm } from "@/components/FinancialYearForm";
 
@@ -41,7 +42,7 @@ export default async function TierCalculatorPage({
         automatically based on the year end date entered.
       </p>
 
-      <FinancialYearForm orgId={orgId} defaultYearEndOn={defaultYearEndOn} />
+      {canWrite(membership.role) && <FinancialYearForm orgId={orgId} defaultYearEndOn={defaultYearEndOn} />}
 
       {records.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">

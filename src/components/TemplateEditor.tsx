@@ -9,12 +9,14 @@ export function TemplateEditor({
   label,
   initialText,
   groupId,
+  readOnly = false,
 }: {
   orgId: string;
   filename: string;
   label: string;
   initialText: string;
   groupId: string | null;
+  readOnly?: boolean;
 }) {
   const router = useRouter();
   const [text, setText] = useState(initialText);
@@ -48,20 +50,25 @@ export function TemplateEditor({
     <div className="mb-8 rounded-lg border border-gray-200 p-4">
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-sm font-semibold">{label}</h2>
-        <div className="flex items-center gap-2">
-          {saved && <span className="text-xs text-green-700">Saved to document vault</span>}
-          <button
-            onClick={onSave}
-            disabled={loading}
-            className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
-          >
-            {loading ? "Saving..." : "Save to document vault"}
-          </button>
-        </div>
+        {readOnly ? (
+          <span className="text-xs text-gray-500">Read only</span>
+        ) : (
+          <div className="flex items-center gap-2">
+            {saved && <span className="text-xs text-green-700">Saved to document vault</span>}
+            <button
+              onClick={onSave}
+              disabled={loading}
+              className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+            >
+              {loading ? "Saving..." : "Save to document vault"}
+            </button>
+          </div>
+        )}
       </div>
       <textarea
-        className="h-64 w-full rounded-md border border-gray-300 p-3 font-mono text-xs"
+        className="h-64 w-full rounded-md border border-gray-300 p-3 font-mono text-xs disabled:bg-gray-50 disabled:text-gray-500"
         value={text}
+        disabled={readOnly}
         onChange={(e) => {
           setText(e.target.value);
           setSaved(false);

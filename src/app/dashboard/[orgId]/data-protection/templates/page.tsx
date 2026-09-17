@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { findLatestDocumentByFilename } from "@/lib/documents";
 import { privacyNoticeTemplate, dataRetentionPolicyTemplate } from "@/lib/data-protection-templates";
+import { canWrite } from "@/lib/permissions";
 import { DataProtectionSubNav } from "@/components/DataProtectionSubNav";
 import { TemplateEditor } from "@/components/TemplateEditor";
 
@@ -54,6 +55,7 @@ export default async function TemplatesPage({
         label="Privacy notice"
         initialText={privacyText}
         groupId={existingPrivacy?.groupId ?? null}
+        readOnly={!canWrite(membership.role)}
       />
 
       <TemplateEditor
@@ -62,6 +64,7 @@ export default async function TemplatesPage({
         label="Data retention policy"
         initialText={retentionText}
         groupId={existingRetention?.groupId ?? null}
+        readOnly={!canWrite(membership.role)}
       />
     </div>
   );

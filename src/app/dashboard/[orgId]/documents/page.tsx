@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listDocumentGroups, DOCUMENT_TAG_LABELS } from "@/lib/documents";
+import { canWrite } from "@/lib/permissions";
 import { DocumentUploadForm } from "@/components/DocumentUploadForm";
 
 function formatSize(bytes: number) {
@@ -35,7 +36,7 @@ export default async function DocumentsPage({
         Governing documents, past filings, and policies for {membership.organisation.name}.
       </p>
 
-      <DocumentUploadForm orgId={orgId} existingGroups={existingGroups} />
+      {canWrite(membership.role) && <DocumentUploadForm orgId={orgId} existingGroups={existingGroups} />}
 
       {groups.length === 0 ? (
         <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">

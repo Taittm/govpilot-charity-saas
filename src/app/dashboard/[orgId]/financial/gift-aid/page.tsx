@@ -4,6 +4,7 @@ import { getMembership } from "@/lib/orgs";
 import { listDonations } from "@/lib/financial";
 import { summarizeTaxYear, taxYearLabelFor } from "@/lib/gift-aid";
 import { currentTaxYearLabel } from "@/lib/tax-year";
+import { canWrite } from "@/lib/permissions";
 import { FinancialSubNav } from "@/components/FinancialSubNav";
 import { DonationForm } from "@/components/DonationForm";
 import { TaxYearSelect } from "@/components/TaxYearSelect";
@@ -46,7 +47,7 @@ export default async function GiftAidPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <FinancialSubNav orgId={orgId} active="/gift-aid" />
 
-      <DonationForm orgId={orgId} />
+      {canWrite(membership.role) && <DonationForm orgId={orgId} />}
 
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-sm font-semibold">Tax year summary</h2>

@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
+import { canManageMembers } from "@/lib/permissions";
 
 const navItems = [
   { label: "Overview", href: "", enabled: true },
@@ -59,6 +60,14 @@ export default async function OrgLayout({
                 {item.label}
               </span>
             )
+          )}
+          {canManageMembers(membership.role) && (
+            <a
+              href={`/dashboard/${orgId}/members`}
+              className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
+              Members
+            </a>
           )}
         </nav>
       </aside>

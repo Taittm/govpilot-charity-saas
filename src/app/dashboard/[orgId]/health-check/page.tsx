@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { listHealthChecksForOrg } from "@/lib/health-check/data";
 import { RAG_LABEL, RAG_COLOR } from "@/lib/health-check/scoring";
+import { canWrite } from "@/lib/permissions";
 
 export default async function HealthCheckListPage({
   params,
@@ -28,12 +29,14 @@ export default async function HealthCheckListPage({
             scored red/amber/green.
           </p>
         </div>
-        <a
-          href={`/dashboard/${orgId}/health-check/new`}
-          className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
-        >
-          Run health check
-        </a>
+        {canWrite(membership.role) && (
+          <a
+            href={`/dashboard/${orgId}/health-check/new`}
+            className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+          >
+            Run health check
+          </a>
+        )}
       </div>
 
       {checks.length === 0 ? (

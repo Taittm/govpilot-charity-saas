@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { getMembership } from "@/lib/orgs";
 import { getIcoRegistration } from "@/lib/data-protection";
+import { canWrite } from "@/lib/permissions";
 import { DataProtectionSubNav } from "@/components/DataProtectionSubNav";
 import { IcoRegistrationForm } from "@/components/IcoRegistrationForm";
 
@@ -25,11 +26,13 @@ export default async function IcoRegistrationPage({
       <p className="mb-6 text-sm text-gray-500">{membership.organisation.name}</p>
       <DataProtectionSubNav orgId={orgId} active="/ico" />
 
-      <IcoRegistrationForm
-        orgId={orgId}
-        initialTier={ico?.tier ?? "TIER_1"}
-        initialRenewalOn={ico?.renewalOn ? ico.renewalOn.toISOString().slice(0, 10) : ""}
-      />
+      {canWrite(membership.role) && (
+        <IcoRegistrationForm
+          orgId={orgId}
+          initialTier={ico?.tier ?? "TIER_1"}
+          initialRenewalOn={ico?.renewalOn ? ico.renewalOn.toISOString().slice(0, 10) : ""}
+        />
+      )}
 
       <p className="text-sm text-gray-600">
         This tier and renewal date drive the &quot;ICO data protection fee renewal&quot; item on the{" "}

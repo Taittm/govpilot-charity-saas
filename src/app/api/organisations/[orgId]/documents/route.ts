@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
 import { DocumentTag } from "@prisma/client";
-import { auth } from "@/auth";
-import { getMembership } from "@/lib/orgs";
+import { requireWriteMembership, isAuthFailure } from "@/lib/api-auth";
 import { createOrVersionDocument, DocumentUploadError } from "@/lib/documents";
 
 const VALID_TAGS = new Set<string>(Object.values(DocumentTag));
 
 export async function POST(request: Request, { params }: { params: Promise<{ orgId: string }> }) {
-  const session = await auth();
-  if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const { orgId } = await params;
-  const membership = await getMembership(session.user.id, orgId);
-  if (!membership) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  const authResult = await requireWriteMembership(orgId);
+  if (isAuthFailure(authResult)) return authResult.error;
+  const { session } = authResult;
 
   const formData = await request.formData();
   const file = formData.get("file");

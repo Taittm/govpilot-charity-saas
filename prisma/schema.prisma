@@ -52,6 +52,7 @@ model User {
   memberships Membership[]
   healthChecks HealthCheck[]
   documents    Document[]
+  sentInvitations Invitation[]
 }
 
 // An Organisation is a client (consultant tenant shape) or the charity/CIC itself
@@ -80,6 +81,7 @@ model Organisation {
   dataBreaches          DataBreach[]
   subjectAccessRequests SubjectAccessRequest[]
   grants                Grant[]
+  invitations           Invitation[]
 }
 
 model Membership {
@@ -418,4 +420,27 @@ model GrantReportingObligation {
   grant   Grant  @relation(fields: [grantId], references: [id], onDelete: Cascade)
 
   @@index([grantId])
+}
+
+// Invite-by-link, not invite-by-email: this prototype has no outbound email
+// service configured, so accepting is a token URL the inviter copies and
+// sends themselves (see src/lib/permissions.ts, src/app/invite/[token]).
+// acceptedAt stays null until claimed; expiresAt defaults to 7 days out.
+model Invitation {
+  id         String    @id @default(cuid())
+  token      String    @unique @default(cuid())
+  email      String
+  role       RoleName
+  createdAt  DateTime  @default(now())
+  expiresAt  DateTime
+  acceptedAt DateTime?
+
+  organisationId String
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+
+  invitedByUserId String
+  invitedBy       User   @relation(fields: [invitedByUserId], references: [id])
+
+  @@index([organisationId])
+  @@index([email])
 }
