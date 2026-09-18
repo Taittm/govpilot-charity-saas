@@ -30,7 +30,7 @@ export function AcceptInviteButton({ token }: { token: string }) {
       <button
         onClick={accept}
         disabled={loading}
-        className="self-start rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="self-start rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Joining..." : "Accept invitation"}
       </button>

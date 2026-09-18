@@ -103,7 +103,7 @@ export function HealthCheckForm({ orgId }: { orgId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="self-start rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
+        className="self-start rounded-md bg-blue-600 hover:bg-blue-700 px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Scoring..." : "Submit health check"}
       </button>

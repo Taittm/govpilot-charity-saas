@@ -26,13 +26,13 @@ export default async function OrgDashboardPage({
 
   return (
     <div>
-      <h1 className="mb-1 text-xl font-semibold">{organisation.name}</h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <h1 className="mb-1 text-2xl font-bold tracking-tight text-slate-900">{organisation.name}</h1>
+      <p className="mb-8 text-sm text-slate-500">
         {organisation.type} · {incomeBandLabels[organisation.incomeBand]} · year end{" "}
         {new Date(organisation.financialYearEnd).toLocaleDateString("en-GB")}
       </p>
 
-      <div className="rounded-lg border border-dashed border-gray-300 p-8 text-center text-sm text-gray-500">
+      <div className="rounded-xl border border-dashed border-slate-200 bg-slate-50/60 p-8 text-center text-sm text-slate-500">
         This is the dashboard frame for this organisation. Health checks, the compliance calendar, document vault,
         and other modules will appear here as they're built in later phases.
       </div>

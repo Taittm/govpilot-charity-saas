@@ -32,12 +32,12 @@ export default async function OrgLayout({
   const { organisation } = membership;
 
   return (
-    <div className="flex min-h-[calc(100vh-57px)]">
-      <aside className="w-60 shrink-0 border-r border-gray-200 px-4 py-6">
+    <div className="flex min-h-[calc(100vh-57px)] bg-white">
+      <aside className="w-60 shrink-0 border-r border-slate-100 bg-slate-50/60 px-4 py-6">
         <div className="mb-6">
-          <p className="text-xs uppercase tracking-wide text-gray-400">Organisation</p>
-          <p className="font-medium">{organisation.name}</p>
-          <p className="text-xs text-gray-500">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Organisation</p>
+          <p className="font-semibold text-slate-900">{organisation.name}</p>
+          <p className="text-xs text-slate-500">
             {organisation.type} · your role: {membership.role.replace("_", " ").toLowerCase()}
           </p>
         </div>
@@ -47,7 +47,7 @@ export default async function OrgLayout({
               <a
                 key={item.label}
                 href={`/dashboard/${orgId}${item.href}`}
-                className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700"
               >
                 {item.label}
               </a>
@@ -55,7 +55,7 @@ export default async function OrgLayout({
               <span
                 key={item.label}
                 title="Coming in a later phase"
-                className="cursor-not-allowed rounded-md px-3 py-2 text-sm text-gray-400"
+                className="cursor-not-allowed rounded-lg px-3 py-2 text-sm text-slate-400"
               >
                 {item.label}
               </span>
@@ -64,14 +64,14 @@ export default async function OrgLayout({
           {canManageMembers(membership.role) && (
             <a
               href={`/dashboard/${orgId}/members`}
-              className="rounded-md px-3 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-slate-600 hover:bg-blue-50 hover:text-blue-700"
             >
               Members
             </a>
           )}
         </nav>
       </aside>
-      <div className="flex-1 px-8 py-6">{children}</div>
+      <div className="flex-1 bg-white px-8 py-6">{children}</div>
     </div>
   );
 }

@@ -16,23 +16,31 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }));
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
-        <a href="/dashboard" className="font-semibold">
-          Compliance Hub
+    <div className="flex min-h-screen flex-col bg-white text-slate-900">
+      <header className="flex items-center justify-between border-b border-slate-100 bg-white px-6 py-3">
+        <a href="/dashboard" className="flex items-center gap-2">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
+            CH
+          </span>
+          <span className="text-lg font-semibold tracking-tight text-slate-900">
+            Compliance Hub
+          </span>
         </a>
         <div className="flex items-center gap-4">
           {options.length > 0 && (
-            <a href="/dashboard/deadlines" className="text-sm text-gray-700 hover:underline">
+            <a
+              href="/dashboard/deadlines"
+              className="text-sm font-medium text-slate-600 hover:text-blue-700"
+            >
               All deadlines
             </a>
           )}
           {options.length > 0 && <OrgSwitcher options={options} />}
-          <span className="text-sm text-gray-500">{session.user.email}</span>
+          <span className="text-sm text-slate-500">{session.user.email}</span>
           <SignOutButton />
         </div>
       </header>
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 bg-white">{children}</main>
     </div>
   );
 }

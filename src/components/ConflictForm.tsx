@@ -74,7 +74,7 @@ export function ConflictForm({ orgId }: { orgId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
+        className="rounded-md bg-blue-600 hover:bg-blue-700 px-3 py-1.5 text-sm font-medium text-white disabled:opacity-50"
       >
         {loading ? "Saving..." : "Add"}
       </button>

@@ -105,7 +105,7 @@ export default function NewOrganisationPage() {
         <button
           type="submit"
           disabled={loading}
-          className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
+          className="rounded-md bg-blue-600 hover:bg-blue-700 px-3 py-2 text-sm font-medium text-white disabled:opacity-50"
         >
           {loading ? "Creating..." : "Create organisation"}
         </button>

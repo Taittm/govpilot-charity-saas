@@ -14,12 +14,12 @@ export function OrgSwitcher({ options }: { options: OrgOption[] }) {
 
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="org-switcher" className="text-sm text-gray-500">
+      <label htmlFor="org-switcher" className="text-sm text-slate-500">
         Client
       </label>
       <select
         id="org-switcher"
-        className="rounded-md border border-gray-300 px-2 py-1 text-sm"
+        className="rounded-lg border border-slate-200 px-2 py-1 text-sm text-slate-700 focus:border-blue-400 focus:outline-none"
         value={currentOrgId ?? ""}
         onChange={(e) => router.push(`/dashboard/${e.target.value}`)}
       >
@@ -31,7 +31,7 @@ export function OrgSwitcher({ options }: { options: OrgOption[] }) {
       </select>
       <a
         href="/dashboard/new"
-        className="rounded-md border border-gray-300 px-2 py-1 text-sm text-gray-700 hover:bg-gray-50"
+        className="rounded-lg border border-slate-200 px-2 py-1 text-sm font-medium text-slate-700 hover:border-blue-200 hover:text-blue-700"
       >
         + New organisation
       </a>

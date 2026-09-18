@@ -32,7 +32,7 @@ export default async function HealthCheckListPage({
         {canWrite(membership.role) && (
           <a
             href={`/dashboard/${orgId}/health-check/new`}
-            className="rounded-md bg-gray-900 px-3 py-2 text-sm font-medium text-white"
+            className="rounded-md bg-blue-600 hover:bg-blue-700 px-3 py-2 text-sm font-medium text-white"
           >
             Run health check
           </a>
