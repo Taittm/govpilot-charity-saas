@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BackToTop } from "./BackToTop";
 import {
   IconArrowRight,
   IconBriefcase,
@@ -120,6 +121,7 @@ export function MarketingHome() {
       <Faq />
       <FinalCta />
       <SiteFooter />
+      <BackToTop />
     </div>
   );
 }
