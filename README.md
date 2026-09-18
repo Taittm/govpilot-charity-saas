@@ -1,4 +1,4 @@
-# Compliance Console — Phase 0 through Phase 8
+# Compliance Hub — Phase 0 through Phase 8
 
 Coded prototype of the UK charity/CIC compliance SaaS described in [CLAUDE.md](./CLAUDE.md).
 

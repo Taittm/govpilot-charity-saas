@@ -84,12 +84,12 @@ const REGULATORY_FACTS = [
 
 const FAQS = [
   {
-    q: "Does Compliance Console give legal or financial advice?",
+    q: "Does Compliance Hub give legal or financial advice?",
     a: "No. It tracks deadlines, stores evidence and scores your position against known rules, but it isn't a substitute for professional advice. Always confirm requirements directly with the Charity Commission, Companies House, ICO, HMRC or your accountant/examiner.",
   },
   {
     q: "Do you carry out DBS checks?",
-    a: "No — DBS checks always go through an authorised umbrella body. Compliance Console only tracks the check type, date and expiry so renewals don't get missed.",
+    a: "No — DBS checks always go through an authorised umbrella body. Compliance Hub only tracks the check type, date and expiry so renewals don't get missed.",
   },
   {
     q: "Can I give my trustees or team members their own login?",
@@ -130,10 +130,10 @@ function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-2">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-            CC
+            CH
           </span>
           <span className="text-lg font-semibold tracking-tight text-slate-900">
-            Compliance Console
+            Compliance Hub
           </span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-medium text-slate-600 md:flex">
@@ -180,7 +180,7 @@ function Hero() {
             <span className="text-blue-600"> One calendar.</span> Zero surprises.
           </h1>
           <p className="mt-5 text-lg text-slate-600">
-            Compliance Console brings Charity Commission filings, Companies House,
+            Compliance Hub brings Charity Commission filings, Companies House,
             ICO fees, Gift Aid, DBS renewals and more into a single system — so
             trustees stop guessing and consultants stop rebuilding the same
             spreadsheet for every client.
@@ -335,7 +335,7 @@ function HowItWorks() {
     <section id="product" className="bg-blue-600 py-20 text-white">
       <div className="mx-auto max-w-7xl px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-bold tracking-tight">How Compliance Console helps</h2>
+          <h2 className="text-3xl font-bold tracking-tight">How Compliance Hub helps</h2>
           <p className="mt-4 text-blue-100">
             It replaces the manual health check a consultant would normally run by
             hand — and keeps working long after that one-off engagement ends.
@@ -453,7 +453,7 @@ function RegulatoryFacts() {
           We track the rules so you don&apos;t have to
         </h2>
         <p className="mt-4 text-slate-600">
-          The regulatory landscape keeps moving — Compliance Console is built to
+          The regulatory landscape keeps moving — Compliance Hub is built to
           move with it.
         </p>
       </div>
@@ -612,10 +612,10 @@ function SiteFooter() {
           <div className="max-w-sm">
             <span className="flex items-center gap-2">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-sm font-bold text-white">
-                CC
+                CH
               </span>
               <span className="text-lg font-semibold text-slate-900">
-                Compliance Console
+                Compliance Hub
               </span>
             </span>
             <p className="mt-3 text-sm text-slate-500">
@@ -643,14 +643,14 @@ function SiteFooter() {
         </div>
         <div className="mt-10 border-t border-slate-100 pt-6">
           <p className="text-xs leading-relaxed text-slate-400">
-            Compliance Console is a tracking and workflow tool, not a source of
+            Compliance Hub is a tracking and workflow tool, not a source of
             legal or financial advice. Always confirm requirements with the
             Charity Commission, Companies House, ICO, HMRC and your
             professional advisers. DBS checks are always carried out through
             an authorised umbrella body — this product only tracks dates.
           </p>
           <p className="mt-4 text-xs text-slate-400">
-            © {new Date().getFullYear()} Compliance Console.
+            © {new Date().getFullYear()} Compliance Hub.
           </p>
         </div>
       </div>

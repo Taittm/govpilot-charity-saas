@@ -19,7 +19,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     <div className="flex min-h-screen flex-col">
       <header className="flex items-center justify-between border-b border-gray-200 px-6 py-3">
         <a href="/dashboard" className="font-semibold">
-          Compliance Console
+          Compliance Hub
         </a>
         <div className="flex items-center gap-4">
           {options.length > 0 && (

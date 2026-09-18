@@ -21,7 +21,7 @@ other. Have it reviewed by a solicitor before issuing it to a real client.*
 ## 1. Subject matter and duration
 
 This agreement covers the Processor's processing of personal data on the Controller's
-behalf via the Compliance Console platform, for the duration of the Controller's
+behalf via the Compliance Hub platform, for the duration of the Controller's
 subscription plus any period required to fulfil clause 8 (return/deletion of data).
 
 ## 2. Nature and purpose of processing

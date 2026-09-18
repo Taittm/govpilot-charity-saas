@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Compliance Console — UK Charity & CIC Compliance Management",
+  title: "Compliance Hub — UK Charity & CIC Compliance Management",
   description:
     "One calendar for Charity Commission, Companies House, ICO, HMRC and DBS deadlines — built for UK charities, CICs and the consultants who support them.",
 };
